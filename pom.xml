@@ -2,17 +2,55 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+
     <groupId>com.github.lyr-2000</groupId>
     <artifactId>common-web-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.2</version>
     <name>lyr-2000</name>
     <description>my common web api 我的项目接口的封装</description>
+    <packaging>jar</packaging>
+    <!-- 许可证信息 -->
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <!-- SCM信息 -> git在github上托管 -->
+    <scm>
+        <connection>scm:git:git@github.com:lyr-2000/common-web-api-starter.git</connection>
+        <developerConnection>scm:git:git@github.com:lyr-2000/common-web-api-starter.git</developerConnection>
+        <url>git@github.com:lyr-2000/common-web-api-starter.git</url>
+        <tag>HEAD</tag>
+    </scm>
+    <!-- 开发者信息 -->
+    <developers>
+        <developer>
+            <name>lyr-2000</name>
+            <email>1957476540@qq.com</email>
+            <url>https://github.com/lyr-2000</url>
+        </developer>
+    </developers>
+
+
+
+
+
 
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
@@ -80,6 +118,22 @@
 
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.75</version>
+        </dependency>
+
+
+
     </dependencies>
 
     <dependencyManagement>
@@ -93,6 +147,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
     <build>
         <plugins>
@@ -115,7 +170,7 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-<!--            &lt;!&ndash; 以下都为上传jar默认配置不做修改 &ndash;&gt;-->
+            <!-- 以下都为上传jar默认配置不做修改 -->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -192,5 +247,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

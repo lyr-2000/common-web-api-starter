@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.lyr2000.common.enums.ApiCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result<T>  implements ApiResult{
 

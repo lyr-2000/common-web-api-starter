@@ -3,6 +3,8 @@ package com.github.lyr2000;
 import com.github.lyr2000.common.aop.LocalCache;
 import com.github.lyr2000.common.enums.Unit;
 import com.github.lyr2000.common.util.SpelUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.SneakyThrows;
@@ -52,6 +54,8 @@ class Lyr2000ApplicationTests {
         String res2 = SpelUtil.getValueByMethod("#i>0",this.getClass().getMethod("ll",int.class),new Object[]{ -1});
         Assertions.assertEquals("true",res);
         Assertions.assertEquals("false",res2);
+        // PageHelper.startPage(1,1);
+        // PageInfo
     }
 
 

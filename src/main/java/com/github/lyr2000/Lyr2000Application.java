@@ -1,6 +1,7 @@
 package com.github.lyr2000;
 
 import com.github.lyr2000.common.aop.LocalCache;
+import com.github.lyr2000.common.dto.PageResult;
 import com.github.lyr2000.common.dto.Result;
 import com.github.lyr2000.common.enums.DefaultApiCode;
 import com.github.lyr2000.common.enums.Unit;
@@ -24,7 +25,8 @@ public class Lyr2000Application {
     @GetMapping("/hello")
     @LocalCache(unit = Unit.Day, duration = 1, cacheKey = "'ss'", condition = "false")
     public Result foo() {
-        return Result.from(DefaultApiCode.OK);
+
+        return PageResult.from(DefaultApiCode.OK);
     }
 
 }

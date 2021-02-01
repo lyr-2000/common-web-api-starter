@@ -28,6 +28,7 @@ public enum DefaultApiCode implements ApiCode{
     NEW_USER(1002, "新用户"),
     TOKEN_ERROR(1003,"token验证失败"),
 
+
     ACCOUNT_FREEZE(1600,"账号冻结");
 
 
