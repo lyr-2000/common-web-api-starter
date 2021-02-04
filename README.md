@@ -4,3 +4,9 @@
 
 # 延伸阅读
 
+<!-- https://mvnrepository.com/artifact/com.github.lyr-2000/common-web-api -->
+<dependency>
+    <groupId>com.github.lyr-2000</groupId>
+    <artifactId>common-web-api</artifactId>
+    <version>1.2</version>
+</dependency>
