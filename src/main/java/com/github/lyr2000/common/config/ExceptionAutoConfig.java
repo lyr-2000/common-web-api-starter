@@ -13,10 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ExceptionAutoConfig {
 
-    // @Bean
-    // public BasicExceptionHandler basicExceptionHandler() {
-    //     return new BasicExceptionHandler();
-    // }
+
     @Bean
     @ConditionalOnMissingBean
     public DefaultBasicExceptionHandlerImpl defaultBasicExceptionHandler() {

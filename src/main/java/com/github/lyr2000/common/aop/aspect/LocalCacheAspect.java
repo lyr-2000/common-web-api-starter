@@ -51,12 +51,12 @@ public class LocalCacheAspect {
             String keyName = SpelUtil.generateKeyBySpEL(cacheConfig.cacheKey(),joinPoint);
             String express = cacheConfig.condition();
 
-            log.info("keyName = {}",keyName);
+            log.debug("keyName = {}",keyName);
              if (StrUtil.isNotBlank(express)){
                 String test = SpelUtil.generateKeyBySpEL(express,joinPoint);
                 if ("false".equals(test)) {
                     //如果条件不满足
-                    log.info("eq false cache");
+                    log.debug("eq false cache");
                     return joinPoint.proceed();
                 }
             }
