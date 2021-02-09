@@ -12,7 +12,7 @@
 
     <groupId>com.github.lyr-2000</groupId>
     <artifactId>common-web-api</artifactId>
-    <version>1.5</version>
+    <version>1.6</version>
     <name>lyr-2000</name>
     <description>my common web api 我的项目接口的封装</description>
     <packaging>jar</packaging>
@@ -187,7 +187,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
+                <version>1.6.7</version>
                 <!-- autoReleaseAfterClose的值为true，则脚本会自动完成在平台上close、release的操作，至此你将成功发布了 -->
                 <extensions>true</extensions>
                 <configuration>
