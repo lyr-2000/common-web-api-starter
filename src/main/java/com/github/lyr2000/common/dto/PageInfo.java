@@ -31,4 +31,15 @@ public class PageInfo<T> {
         return pageInfo;
     }
 
+
+    // public static <T> PageInfo<T> of(org.springframework.data.domain.Page<T> ipage) {
+    //     PageInfo<T> pageInfo = new PageInfo<>();
+    //     pageInfo.curPage = ipage.getNumber() + 1;
+    //     pageInfo.size = ipage.getSize();
+    //     pageInfo.totalCount = ipage.getTotalElements();
+    //     pageInfo.list = ipage.getContent();
+    //     pageInfo.totalPage = ipage.getTotalPages();
+    //     return pageInfo;
+    // }
+
 }

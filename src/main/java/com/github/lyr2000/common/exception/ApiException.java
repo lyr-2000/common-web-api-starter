@@ -1,5 +1,6 @@
 package com.github.lyr2000.common.exception;
 
+import com.github.lyr2000.common.enums.ApiCode;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -30,7 +31,10 @@ public class ApiException extends RuntimeException{
         result = 31 * result + (code != null ? code.hashCode() : 0);
         return result;
     }
-
+    public ApiException(@NonNull ApiCode errCode) {
+        this.code = errCode.getCode();
+        this.message = errCode.getMessage();
+    }
     public ApiException(@NonNull ApiErrorCode errCode) {
         this.code = errCode.getCode();
         this.message = errCode.getMessage();

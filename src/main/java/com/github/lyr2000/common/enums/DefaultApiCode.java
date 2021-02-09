@@ -29,8 +29,10 @@ public enum DefaultApiCode implements ApiCode{
     TOKEN_ERROR(1003,"token验证失败"),
 
 
-    ACCOUNT_FREEZE(1600,"账号冻结");
+    ACCOUNT_FREEZE(1600,"账号冻结"),
 
+    TokenCheckFail(1611,"身份校验失败"),
+    TokenExpired(1612,"身份校验过期");
 
 
     Integer code;
