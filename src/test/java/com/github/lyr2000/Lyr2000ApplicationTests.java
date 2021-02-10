@@ -1,6 +1,7 @@
 package com.github.lyr2000;
 
 import com.github.lyr2000.common.aop.LocalCache;
+import com.github.lyr2000.common.dto.PageResult;
 import com.github.lyr2000.common.enums.Unit;
 import com.github.lyr2000.common.util.SpelUtil;
 import com.github.pagehelper.PageHelper;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -71,5 +74,13 @@ class Lyr2000ApplicationTests {
         int x4 = ll(1) ;
 
 
+    }
+
+    @Test
+    void lllll() {
+        PageHelper.startPage(1,10);
+        //list = query from mysql....
+        // PageResult res = PageResult.from(list);
+        new PageResult();
     }
 }

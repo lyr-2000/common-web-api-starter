@@ -22,11 +22,11 @@ public class Lyr2000Application {
     }
 
 
-    @GetMapping("/hello")
-    @LocalCache(unit = Unit.Day, duration = 1, cacheKey = "'ss'", condition = "false")
-    public Result foo() {
-
-        return PageResult.from(DefaultApiCode.OK);
-    }
+    // @GetMapping("/hello")
+    // @LocalCache(unit = Unit.Day, duration = 1, cacheKey = "'ss'", condition = "false")
+    // public Result foo() {
+    //
+    //     return PageResult.from(DefaultApiCode.OK);
+    // }
 
 }
