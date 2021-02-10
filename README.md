@@ -249,6 +249,89 @@ public class JwtRealmImpl extends JwtRealm {
 ```
 
 
+##  自定义异常处理
+尽量满足接口的开闭原则，因此 这里定义了接口抽象
+实现 ApiErrorCode 接口，将异常交给切面处理，减少重复代码
+#### example
+
+```java
+
+package com.github.lyr.common.exception;
+
+import com.github.lyr2000.common.exception.ApiErrorCode;
+import io.swagger.annotations.ApiModel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * @Author lyr
+ * @create 2021/2/5 14:00
+ */
+@Getter
+@AllArgsConstructor
+@ApiModel
+public enum ApiCustomErrorCode implements ApiErrorCode {
+
+    RouterBindingException("路由参数绑定异常", 10000+1),
+    NoHandlerException("没有找到对应访问路径", 10000+2),
+    TokenCheckFail("token校验失败",          10000+3),
+    TokenExpired("token过期，请重新签名",10000+4),
+    LoginFail("登录失败，请检查用户名，密码",10000+4),
+    ;
+
+
+
+    String message;
+    Integer code;
+    // public static int base = 10000;
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public Integer getCode() {
+        return code;
+    }
+}
+
+
+```
+
+```java
+
+ /**
+     * 登录
+     *
+     * @param loginDTO
+     * @return
+     */
+    @Override
+    public Result<Map<String, Object>> getTokenInfo(LoginDTO loginDTO) {
+        UserPasswordInfo info = userMapperCustom.getUserPasswordInfo(loginDTO.getEmail());
+        if (info!=null && info.getPassword()!=null && info.getPassword().equals(PwdUtil.passwordMd5(loginDTO.getPassword(),info.getSalt()))) {
+            // return Result.of(DefaultApiCode.OK,jwtUtil.sign(new HashMap<>(),10000) );
+            Map data = Maps.newHashMap();
+            data.put("user_id",info.getUserId());
+            return R.res()
+                    .put("token",jwtUtil.sign(data, Duration.ofDays(3).toMillis()))
+                    .end();
+        }
+
+        throw new ApiException(ApiCustomErrorCode.TokenCheckFail);
+    }
+
+
+
+```
+
+
+
+
+
+
+
+
 
 
 
