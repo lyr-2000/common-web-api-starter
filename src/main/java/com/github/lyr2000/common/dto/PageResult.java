@@ -9,12 +9,12 @@ import lombok.*;
  */
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class PageResult extends Result{
+public class PageResult {
     Integer curPage;
     Integer size;
     Integer totalPage;
     Long totalCount;
+    Object data;
 
 
     public static PageResult from(@NonNull PageInfo pageInfo) {
