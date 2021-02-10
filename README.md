@@ -218,6 +218,33 @@ public class JwtRealmImpl extends JwtRealm {
      *
 
 
+  /**
+     * 获取博客信息
+     * @param request
+     * @return
+     */
+    @GetMapping("/blogs_detail")
+    public Result blogs(HttpServletRequest request) {
+        return R.res()
+                .put("msg","it is ok")
+                .end();
+    }
+    
+    /**
+     * 获取博客信息
+     * @param request
+     * @return
+     */
+    @GetMapping("/blogs")
+    public Result blogs(HttpServletRequest request) {
+        return R.res()
+                .put("msg","it is ok")
+                .withPage("blogs",blogService.listBlogs(PageParam.from(request)))
+                .end();
+    }
+
+
+
 
 ```
 
