@@ -153,8 +153,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class JwtRealmImpl extends JwtRealm {
     final UserMapperCustom userMapperCustom;
-    
+
     @Override
+    @Transactional(readOnly = true)
     public void doAuthorizationCustom(SimpleAuthorizationInfo per, JwtToken jwtToken) {
         // super.doAuthorizationCustom(per, jwtToken);
         Map map = jwtToken.getData();
@@ -168,8 +169,8 @@ public class JwtRealmImpl extends JwtRealm {
                 .map(Role::getRoleKey)
                 .collect(Collectors.toList());
         per.addRoles(roles);
-        
-        
+
+
     }
 }
 
