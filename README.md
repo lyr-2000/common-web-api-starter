@@ -94,6 +94,54 @@ public class ShiroConfig {
 
 ```
 
+## 继承 JwtRealm
+```java
+
+package com.github.lyr.blog.admin.config;
+
+import com.github.lyr.blog.basic.mapper.custom.UserMapperCustom;
+import com.github.lyr.blog.basic.pojo.po.Menu;
+import com.github.lyr.blog.basic.pojo.po.Role;
+import com.github.lyr.common.shiro.entity.JwtToken;
+import com.github.lyr.common.shiro.realm.JwtRealm;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * @Author lyr
+ * @create 2021/2/10 20:22
+ */
+@Slf4j
+@AllArgsConstructor
+public class JwtRealmImpl extends JwtRealm {
+    final UserMapperCustom userMapperCustom;
+    
+    @Override
+    public void doAuthorizationCustom(SimpleAuthorizationInfo per, JwtToken jwtToken) {
+        // super.doAuthorizationCustom(per, jwtToken);
+        Map map = jwtToken.getData();
+        String email = (String) map.get("user_id");
+        List<String> permissions = userMapperCustom.getUserPermission(email)
+                .stream()
+                .map(Menu::getPermissionName).collect(Collectors.toList());
+        per.addStringPermissions(permissions);
+        List<String > roles = userMapperCustom.getUserRole(email)
+                .stream()
+                .map(Role::getRoleKey)
+                .collect(Collectors.toList());
+        per.addRoles(roles);
+        
+        
+    }
+}
+
+
+```
 
 
 
