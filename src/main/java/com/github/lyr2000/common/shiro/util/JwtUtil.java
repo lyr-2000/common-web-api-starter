@@ -47,7 +47,7 @@ public class JwtUtil {
      * 生成 jwt
      * @param jwtData
      */
-    public String sign(Map<String,String> jwtData, long ttlMillis) {
+    public String sign(Map<String,Object> jwtData, long ttlMillis) {
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         long nowMillis = System.currentTimeMillis();
