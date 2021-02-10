@@ -2,10 +2,12 @@ package com.github.lyr2000.common.dto;
 
 
 import com.github.lyr2000.common.enums.DefaultApiCode;
+import com.github.pagehelper.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,6 +27,20 @@ public class R {
         this.result.getData().put(k,value);
         return this;
     }
+    public R with(String k,Object v) {
+        return put(k,v);
+    }
+    public <T>R withPage(String k, List<T> list) {
+        this.result.getData()
+                .put(k,PageResult.from(list));
+        return this;
+    }
+    public <T> R withPage(String k, PageInfo<T> pageInfo) {
+        this.result.getData()
+                .put(k,PageResult.from(pageInfo));
+        return this;
+    }
+
 
     /**
      *
