@@ -1,6 +1,5 @@
 package com.github.lyr2000.common.shiro.entity;
 
-
 import com.github.lyr2000.common.shiro.JwtResult;
 import lombok.Builder;
 import lombok.Data;

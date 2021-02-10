@@ -1,25 +1,23 @@
 package com.github.lyr2000.common.shiro.config;
 
+
 import com.github.lyr2000.common.shiro.filter.JwtFilter;
 import com.github.lyr2000.common.shiro.realm.JwtRealm;
+import com.github.lyr2000.common.shiro.realm.SessionRealm;
 import com.github.lyr2000.common.shiro.util.JwtUtil;
-import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
-import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import javax.annotation.Resource;
 import javax.servlet.Filter;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -29,24 +27,32 @@ import java.util.Map;
 @Configuration
 public class JwtAutoConfiguration {
     @Bean
+    @ConditionalOnMissingBean
+    public ShiroCustomProperties jwtProperties() {
+        return new ShiroCustomProperties("lyr-2000.blog","token");
+    }
 
-    public JwtProperties jwtProperties() {
-        return new JwtProperties("lyr-2000.blog","token");
+    @Bean
+    @ConditionalOnMissingBean
+    public JwtUtil jwtUtil(ShiroCustomProperties shiroCustomProperties) {
+        return new JwtUtil(shiroCustomProperties);
     }
     @Bean
+    @ConditionalOnMissingBean
+    public JwtFilter jwtFilter(ShiroCustomProperties shiroCustomProperties, JwtUtil jwtUtil) {
 
-    public JwtUtil jwtUtil() {
-        return new JwtUtil(jwtProperties());
+        return new JwtFilter(shiroCustomProperties,jwtUtil);
     }
     @Bean
-
-    public JwtFilter jwtFilter() {
-        return new JwtFilter(jwtProperties(),jwtUtil());
-    }
-    @Bean
-
+    @ConditionalOnMissingBean
     public JwtRealm jwtRealm() {
         return new JwtRealm();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public SessionRealm sessionRealm() {
+        return new SessionRealm();
     }
 
 
@@ -59,18 +65,20 @@ public class JwtAutoConfiguration {
      */
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean("securityManager")
-
-    public DefaultWebSecurityManager defaultWebSecurityManager() {
+    public DefaultWebSecurityManager defaultWebSecurityManager(JwtRealm jwtRealm, SessionRealm sessionRealm) {
         DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
         // 使用自定义Realm
-        defaultWebSecurityManager.setRealm(jwtRealm());
+        // defaultWebSecurityManager.setRealm(jwtRealm);
+        defaultWebSecurityManager.setRealms(Arrays.asList(jwtRealm,sessionRealm));
+        // defaultWebSecurityManager.setL
+
         // 关闭Shiro自带的session
-        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
-        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+        // DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+        // DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         //禁用缓存
-        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
-        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
-        defaultWebSecurityManager.setSubjectDAO(subjectDAO);
+        // defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
+        // subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+        // defaultWebSecurityManager.setSubjectDAO(subjectDAO);
         // 设置自定义Cache缓存
 
         return defaultWebSecurityManager;
@@ -80,7 +88,6 @@ public class JwtAutoConfiguration {
      * 下面的代码是添加注解支持
      */
     @Bean
-
     @DependsOn("lifecycleBeanPostProcessor")
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
@@ -90,39 +97,33 @@ public class JwtAutoConfiguration {
     }
 
     @Bean
-
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
     @Bean
-
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
         advisor.setSecurityManager(securityManager);
         return advisor;
     }
 
-    // @Resource
-    // private JwtUtil jwtUtil;
-    // @Resource
-    // private JwtFilter jwtFilter;
-    // @Resource
-    // private JwtProperties jwtProperties;
+
 
 
     @Bean
     @ConditionalOnMissingBean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager) {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager, ShiroCustomProperties properties, JwtFilter jwtFilter) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         // 添加自己的过滤器取名为jwt
         Map<String, Filter> filterMap = new HashMap<>(16);
-        filterMap.put("jwt", jwtFilter());
+        filterMap.put("jwt", jwtFilter);
         factoryBean.setFilters(filterMap);
         factoryBean.setSecurityManager(securityManager);
+
         // 自定义url规则使用LinkedHashMap有序Map
         // LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>(16);
-        JwtProperties properties = jwtProperties();
+        // JwtProperties properties = jwtProperties();
         // 登录接口放开
         // filterChainDefinitionMap.put("/user/login", "anon");
         // "/api/getToken","/api/login/**","/api/register/**"
@@ -135,6 +136,15 @@ public class JwtAutoConfiguration {
         // filterChainDefinitionMap.put("/api/**", "jwt");
         if (properties.getCustomFilterChain()!=null) {
             factoryBean.setFilterChainDefinitionMap(properties.getCustomFilterChain());
+        }
+        if (properties.getLoginUrl()!=null) {
+            factoryBean.setLoginUrl(properties.getLoginUrl());
+        }
+        if (properties.getUnauthorizedUrl()!=null) {
+            factoryBean.setUnauthorizedUrl(properties.getUnauthorizedUrl());
+        }
+        if (properties.getSuccessUrl()!=null) {
+            factoryBean.setSuccessUrl(properties.getSuccessUrl());
         }
 
 

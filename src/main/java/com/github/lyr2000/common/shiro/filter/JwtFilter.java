@@ -4,15 +4,15 @@ import cn.hutool.core.util.StrUtil;
 
 import com.github.lyr2000.common.dto.Result;
 import com.github.lyr2000.common.enums.DefaultApiCode;
-import com.github.lyr2000.common.exception.ApiException;
 import com.github.lyr2000.common.shiro.JwtResult;
-import com.github.lyr2000.common.shiro.config.JwtProperties;
 import com.github.lyr2000.common.shiro.config.ShiroConstant;
+import com.github.lyr2000.common.shiro.config.ShiroCustomProperties;
 import com.github.lyr2000.common.shiro.entity.JwtToken;
 import com.github.lyr2000.common.shiro.util.JwtUtil;
 import com.github.lyr2000.common.shiro.util.ShiroWebUtil;
+import com.github.lyr2000.common.util.WebUtil;
 import lombok.AllArgsConstructor;
-import org.apache.shiro.authz.UnauthorizedException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,10 +27,11 @@ import java.io.IOException;
  * @Author lyr
  * @create 2021/2/9 21:20
  */
+@Slf4j
 @AllArgsConstructor
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
-    private final JwtProperties jwtProperties;
+    private final ShiroCustomProperties shiroCustomProperties;
     private final JwtUtil jwtUtil;
     /**
      * 拦截器预处理
@@ -54,16 +55,21 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         return super.preHandle(request, response);
     }
 
+
     @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws UnauthorizedException {
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         //判断请求的请求头是否带上 "Token"
 
         //如果存在，则进入 executeLogin 方法执行登入，检查 token 是否正确
+        // try {
         try {
             return executeLogin(request, response);
         } catch (Exception e) {
             return false;
         }
+        // } catch (Exception e) {
+        //     return false;
+        // }
         // return false;
         //如果请求头不存在 Token，则可能是执行登陆操作或者是游客状态访问，无需检查 token，直接返回 true
 
@@ -104,24 +110,27 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
-        String token = WebUtils.toHttp(request).getHeader(jwtProperties.getTokenHeader());
+        String token = WebUtils.toHttp(request).getHeader(shiroCustomProperties.getTokenHeader());
+        log.info("token={}",token);
         if (null == token || StrUtil.isBlank(token)) {
+            log.info("丢出异常");
+            // throw new ApiException(DefaultApiCode.NO_TOKEN);
             ShiroWebUtil.renderJson((HttpServletResponse) response, Result.of(DefaultApiCode.NO_TOKEN,"请登录验证"));
+            return false;
         }
         JwtToken jwtToken = jwtUtil.decodeJwtToken(token);
         JwtResult result = jwtToken.getResult();
         if(result == null || result == JwtResult.Fail) {
-            throw  new ApiException(DefaultApiCode.TokenCheckFail);
+            ShiroWebUtil.renderJson((HttpServletResponse) response, Result.from(DefaultApiCode.TokenCheckFail));
+            return  false;
         }else if (result == JwtResult.OVERDUE) {
-            throw new ApiException(DefaultApiCode.TokenExpired);
+            WebUtil.renderJson((HttpServletResponse) response, Result.from(DefaultApiCode.TOKEN_EXPIRED));
+            return false;
         }
         request.setAttribute(ShiroConstant.requestAttrName,jwtToken);
         //执行登录逻辑
         getSubject(request,response).login(jwtToken);
         return true;
-
-
-
 
 
     }

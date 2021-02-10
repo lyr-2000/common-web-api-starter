@@ -3,13 +3,10 @@ package com.github.lyr2000.common.shiro.util;
 import cn.hutool.core.codec.Base64;
 
 import com.github.lyr2000.common.shiro.JwtResult;
-import com.github.lyr2000.common.shiro.config.JwtProperties;
+import com.github.lyr2000.common.shiro.config.ShiroCustomProperties;
 import com.github.lyr2000.common.shiro.entity.JwtToken;
-
 import io.jsonwebtoken.*;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -22,26 +19,27 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class JwtUtil {
-    private final JwtProperties jwtProperties;
-    private   SecretKey secretKey;
+    private final ShiroCustomProperties shiroCustomProperties;
+    // private final SecretKey secretKey = generalKey();
+    private SecretKey generateKey;
     /**
      * 生成加密秘钥
      *
      * @return 秘钥
      */
     private SecretKey generalKey() {
-        if (this.secretKey==null) {
+        if (generateKey==null) {
             synchronized (this) {
-                if (this.secretKey==null) {
-                    String stringKey =  jwtProperties.getJwtSecret();
+                if (generateKey==null) {
+                    String stringKey =  shiroCustomProperties.getJwtSecret();
                     // 秘钥
                     byte[] encodedKey = Base64.decode( stringKey);
-                    SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-                    this.secretKey = key;
+                    this.generateKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
                 }
             }
         }
-        return secretKey;
+
+        return generateKey;
     }
 
 

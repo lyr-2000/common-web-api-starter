@@ -1,5 +1,5 @@
 package com.github.lyr2000.common.shiro.realm;
-
+ 
 import com.github.lyr2000.common.shiro.entity.JwtToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -28,7 +28,7 @@ public class JwtRealm extends  AuthorizingRealm {
 
     }
     /**
-     * 授权
+     * 角色权限信息
      * @param principals
      * @return
      */
@@ -43,7 +43,8 @@ public class JwtRealm extends  AuthorizingRealm {
 
 
     /**
-     * @param token 登录
+     * 登录认证的信息
+     * @param
      * @return
      * @throws AuthenticationException
      */
