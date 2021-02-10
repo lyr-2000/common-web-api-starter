@@ -4,14 +4,17 @@ import com.github.lyr2000.common.dto.ViewObject;
 import com.github.lyr2000.common.enums.DefaultApiCode;
 import com.github.lyr2000.common.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -207,5 +210,30 @@ public class DefaultBasicExceptionHandlerImpl {
                 .setCode(e.getCode())
                 .setMessage(e.getMessage());
 
+    }
+
+    /**
+     * @return 路由参数绑定异常
+     */
+    @org.springframework.web.bind.annotation.ExceptionHandler(ServletRequestBindingException.class)
+    public ViewObject bindingException(ServletRequestBindingException ex) {
+        return ViewObject.of(DefaultApiCode.RouterBindingException);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(NoHandlerFoundException.class)
+    public ViewObject noHandlerException(NoHandlerFoundException ex) {
+        return ViewObject.of(DefaultApiCode.NoHandlerException);
+    }
+
+    /**
+     * 权限不足
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(org.apache.shiro.authz.UnauthorizedException.class)
+    public ViewObject unAuthError(UnauthorizedException exception) {
+        return ViewObject
+                .of(DefaultApiCode.FORBIDDEN_REQUEST)
+                .put(ERROR_INFO,exception.getMessage());
     }
 }

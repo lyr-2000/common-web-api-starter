@@ -15,7 +15,7 @@ public enum DefaultApiCode implements ApiCode{
     NO_RESOURCE(404,"找不到资源"),
 
     BAD_REQUEST(400,"请求报文语法错误[参数校验失败]"),
-    FORBIDDEN_REQUEST(403,"没有权限"),
+    FORBIDDEN_REQUEST(403,"没有接口权限"),
 
     SERVER_ERROR(500,"服务异常"),
     SERVICE_UN_AVAILABLE(503,"服务不可用"),
@@ -32,7 +32,11 @@ public enum DefaultApiCode implements ApiCode{
     ACCOUNT_FREEZE(1600,"账号冻结"),
 
     TokenCheckFail(1611,"身份校验失败"),
-    TokenExpired(1612,"身份校验过期");
+    TokenExpired(1612,"身份校验过期"),
+    RouterBindingException(1613,"路由参数绑定异常"),
+    NoHandlerException(1614,"没有对应访问路径");
+
+
 
 
     Integer code;
