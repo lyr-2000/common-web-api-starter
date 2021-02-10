@@ -177,6 +177,49 @@ public class JwtRealmImpl extends JwtRealm {
 
 ```
 
+## pageHelper 通用 pagebean 结果集
+```java
+
+ @Test
+    void lllll() {
+        PageHelper.startPage(1,10);
+        //list = query from mysql....
+        PageResult res = PageResult.from(list);
+        // new PageResult();
+    }
+    
+    
+
+```
+返回结果如下
+```json
+
+{
+  "curPage": 0,
+  "size": 0,
+  "totalPage": 0,
+  "totalCount": 0,
+  "data": {}
+}
+```
+
+
+
+## fluent式编程
+```java
+
+
+
+     *  Map data = Maps.newHashMap();
+     *  data.put("user_id",info.getUserId());
+     *  return R.res()
+     *          .put("token",jwtUtil.sign(data, Duration.ofDays(3).toMillis()))
+     *          .end();
+     *
+
+
+
+```
 
 
 
