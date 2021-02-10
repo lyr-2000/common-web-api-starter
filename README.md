@@ -218,8 +218,228 @@ public class JwtRealmImpl extends JwtRealm {
      *
 
 
+  /**
+     * 获取博客信息
+     * @param request
+     * @return
+     */
+    @GetMapping("/blogs_detail")
+    public Result blogs(HttpServletRequest request) {
+        return R.res()
+                .put("msg","it is ok")
+                .end();
+    }
+    
+    /**
+     * 获取博客信息
+     * @param request
+     * @return
+     */
+    @GetMapping("/blogs")
+    public Result blogs(HttpServletRequest request) {
+        return R.res()
+                .put("msg","it is ok")
+                .withPage("blogs",blogService.listBlogs(PageParam.from(request)))
+                .end();
+    }
+
+
+
 
 ```
+
+
+##  自定义异常处理
+尽量满足接口的开闭原则，因此 这里定义了接口抽象
+实现 ApiErrorCode 接口，将异常交给切面处理，减少重复代码
+#### example
+
+```java
+
+package com.github.lyr.common.exception;
+
+import com.github.lyr2000.common.exception.ApiErrorCode;
+import io.swagger.annotations.ApiModel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * @Author lyr
+ * @create 2021/2/5 14:00
+ */
+@Getter
+@AllArgsConstructor
+@ApiModel
+public enum ApiCustomErrorCode implements ApiErrorCode {
+
+    RouterBindingException("路由参数绑定异常", 10000+1),
+    NoHandlerException("没有找到对应访问路径", 10000+2),
+    TokenCheckFail("token校验失败",          10000+3),
+    TokenExpired("token过期，请重新签名",10000+4),
+    LoginFail("登录失败，请检查用户名，密码",10000+4),
+    ;
+
+
+
+    String message;
+    Integer code;
+    // public static int base = 10000;
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public Integer getCode() {
+        return code;
+    }
+}
+
+
+```
+
+```java
+
+ /**
+     * 登录
+     *
+     * @param loginDTO
+     * @return
+     */
+    @Override
+    public Result<Map<String, Object>> getTokenInfo(LoginDTO loginDTO) {
+        UserPasswordInfo info = userMapperCustom.getUserPasswordInfo(loginDTO.getEmail());
+        if (info!=null && info.getPassword()!=null && info.getPassword().equals(PwdUtil.passwordMd5(loginDTO.getPassword(),info.getSalt()))) {
+            // return Result.of(DefaultApiCode.OK,jwtUtil.sign(new HashMap<>(),10000) );
+            Map data = Maps.newHashMap();
+            data.put("user_id",info.getUserId());
+            return R.res()
+                    .put("token",jwtUtil.sign(data, Duration.ofDays(3).toMillis()))
+                    .end();
+        }
+
+        throw new ApiException(ApiCustomErrorCode.TokenCheckFail);
+    }
+
+
+
+```
+
+
+
+### 需要依赖的库
+
+```java
+
+
+
+
+<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <version>2.4.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.5.7</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+
+
+
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>2.4.2</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.1-jre</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.75</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>1.3.2</version>
+
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+
+
+
+    </dependencies>
+
+
+```
+
+
 
 
 
