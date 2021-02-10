@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.IPage;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import sun.security.krb5.internal.PAData;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,6 +17,17 @@ import javax.servlet.http.HttpServletRequest;
 public class PageParam implements IPage {
     private Integer page;
     private Integer size;
+
+    public static PageParam of(int page,int size) {
+        PageParam pageParam = new PageParam();
+        pageParam.page = page;
+        pageParam.size = size;
+        return pageParam;
+    }
+    public static PageParam of(String page,String size){
+        return of(Integer.parseInt(page),Integer.parseInt(size));
+    }
+
 
     public static PageParam from(HttpServletRequest request) {
         String pageStr = request.getParameter("page");
