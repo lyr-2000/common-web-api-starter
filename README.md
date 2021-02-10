@@ -25,12 +25,22 @@
 ### 1. 自定义 realm
 ```java
 
+/**
+ * 使用 session进行会话管理
+ * @Author lyr
+ * @create 2021/2/10 15:34
+ */
 @Slf4j
 @AllArgsConstructor
 public class SessionRealmImpl extends SessionRealm {
     final UserMapperCustom userMapperCustom;
 
-    @Override
+
+    /**
+     * 获取权限
+     * @param username 
+     * @return
+     */
     public List<String> getPermissions(String username) {
 
         return userMapperCustom
@@ -40,7 +50,12 @@ public class SessionRealmImpl extends SessionRealm {
                 .collect(Collectors.toList());
     }
 
-    @Override
+
+    /**
+     * 获取角色
+     * @param username 
+     * @return
+     */
     public List<String> getRoles(String username) {
         List<Role> roles = userMapperCustom.getUserRole(username);
         return roles.stream()
@@ -49,16 +64,34 @@ public class SessionRealmImpl extends SessionRealm {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public void doAuthorizationCustom(SimpleAuthorizationInfo per, String username) {
+        per.addRoles(getRoles(username));
+        per.addStringPermissions(getPermissions(username));
+    }
+
+    /**
+     * 登录
+     * @param username  用户名字
+     * @param password 密码
+     * @return
+     */
+    @Override
     public boolean check(String username, String password) {
-        System.out.println("username="+username);
-        System.out.println("pwd="+password);
+        // System.out.println("username="+username);
+        // System.out.println("pwd="+password);
         UserPasswordInfo x = userMapperCustom.getUserPasswordInfo(username);
-        if (x==null) return false;
+        if (x==null) {
+            //获取用户的 身份，如果数据库查出为 null，直接返回 false
+            return false;
+        }
         String pwd = PwdUtil.passwordMd5(password,x.getSalt());
-        System.out.println(x);
+        // System.out.println(x);
+        //如果密码和 数据库密码对上了，就认为登录成功
         return pwd.equals(x.getPassword());
     }
 }
+
 
 
 ```
