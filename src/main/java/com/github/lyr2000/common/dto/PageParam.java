@@ -1,6 +1,7 @@
 package com.github.lyr2000.common.dto;
 
 import cn.hutool.core.util.StrUtil;
+import com.github.lyr2000.common.web.Request;
 import com.github.pagehelper.IPage;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -41,6 +42,9 @@ public class PageParam implements IPage {
         else pageParam.size = Integer.valueOf(sizeStr);
         return pageParam;
 
+    }
+    public static PageParam from(Request request) {
+        return request.getPageParam();
     }
 
     @Override

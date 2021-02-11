@@ -78,9 +78,9 @@ class Lyr2000ApplicationTests {
 
     @Test
     void lllll() {
-        PageHelper.startPage(1,10);
-        //list = query from mysql....
-        // PageResult res = PageResult.from(list);
-        new PageResult();
+        // PageHelper.startPage(1,10);
+        // //list = query from mysql....
+        // // PageResult res = PageResult.from(list);
+        //
     }
 }
