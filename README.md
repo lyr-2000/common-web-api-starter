@@ -11,13 +11,16 @@
 <dependency>
   <groupId>com.github.lyr-2000</groupId>
   <artifactId>common-web-api</artifactId>
-  <version>2.8</version>
+  <version>3.0</version>
 </dependency>
 
 
 
 
 ```
+
+## 最新 3.0 版本将 com.github 改成了 io.github , 展示的代码是旧版本的
+
 
 ## 对shiro模块的封装
 ### 1. 自定义 realm
@@ -182,6 +185,30 @@ public class JwtRealmImpl extends JwtRealm {
 
 ```
 
+
+##  shiro简单的配置 【开箱即用】
+```java
+
+
+@Bean
+    public SessionRealm sessionRealm() {
+        return new SessionRealm(){
+            @Override
+            public boolean check(String username, String password) {
+                // System.out.println(username);
+                // System.out.println(password);
+                return "666".equals(username) && "123456".equals(password);
+            }
+        };
+    }
+
+
+```
+
+
+
+
+
 ## pageHelper 通用 pagebean 结果集
 ```java
 
@@ -220,6 +247,10 @@ public class JwtRealmImpl extends JwtRealm {
      *  return R.res()
      *          .put("token",jwtUtil.sign(data, Duration.ofDays(3).toMillis()))
      *          .end();
+     *
+     *   
+     *
+     *    Maps.<String,Object>hashMap().put("ctx","hello world").put("user","Tomcat").getMap())
      *
 
 
@@ -329,6 +360,24 @@ public enum ApiCustomErrorCode implements ApiErrorCode {
 
 
 ```
+
+
+## patternUtil 解析 {} 花括号表达式
+
+```java
+
+
+ @Test
+    void testTemplate() {
+        String x = "{user} ,<abc> ,(ttt) [xxx1],{ctx} hello";
+
+        x = PatternUtil.parseNullAsBlank(x, Maps.<String,Object>hashMap().put("ctx","hello world").put("user","Tomcat").getMap());
+        System.out.println(x);
+        //result:Tomcat ,<abc> ,(ttt) [xxx1],hello world hello
+    }
+
+```
+
 
 
 
