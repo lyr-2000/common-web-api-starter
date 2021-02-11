@@ -9,8 +9,9 @@ import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
-import io.github.lyr2000.common.dto.Result;
+
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,7 @@ import java.io.IOException;
  * @create 2021/2/11 19:42
  */
 @Slf4j
+@Data
 @AllArgsConstructor
 public class QiniuUtil {
 

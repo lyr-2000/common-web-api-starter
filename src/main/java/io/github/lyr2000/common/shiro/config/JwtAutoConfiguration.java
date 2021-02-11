@@ -65,6 +65,7 @@ public class JwtAutoConfiguration {
      */
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean("securityManager")
+    @ConditionalOnMissingBean
     public DefaultWebSecurityManager defaultWebSecurityManager(JwtRealm jwtRealm, SessionRealm sessionRealm) {
         DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
         // 使用自定义Realm
@@ -88,6 +89,7 @@ public class JwtAutoConfiguration {
      * 下面的代码是添加注解支持
      */
     @Bean
+    @ConditionalOnMissingBean
     @DependsOn("lifecycleBeanPostProcessor")
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
@@ -97,11 +99,13 @@ public class JwtAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
         advisor.setSecurityManager(securityManager);
