@@ -9,12 +9,10 @@
 
 <!-- https://mvnrepository.com/artifact/com.github.lyr-2000/common-web-api -->
 <dependency>
-    <groupId>com.github.lyr-2000</groupId>
-    <artifactId>common-web-api</artifactId>
-    <version>2.0</version>
+  <groupId>com.github.lyr-2000</groupId>
+  <artifactId>common-web-api</artifactId>
+  <version>2.8</version>
 </dependency>
-
-
 
 
 
