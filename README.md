@@ -221,6 +221,10 @@ public class JwtRealmImpl extends JwtRealm {
      *          .put("token",jwtUtil.sign(data, Duration.ofDays(3).toMillis()))
      *          .end();
      *
+     *   
+     *
+     *    Maps.<String,Object>hashMap().put("ctx","hello world").put("user","Tomcat").getMap())
+     *
 
 
   /**
@@ -329,6 +333,24 @@ public enum ApiCustomErrorCode implements ApiErrorCode {
 
 
 ```
+
+
+## patternUtil 解析 {} 花括号表达式
+
+```java
+
+
+ @Test
+    void testTemplate() {
+        String x = "{user} ,<abc> ,(ttt) [xxx1],{ctx} hello";
+
+        x = PatternUtil.parseNullAsBlank(x, Maps.<String,Object>hashMap().put("ctx","hello world").put("user","Tomcat").getMap());
+        System.out.println(x);
+        //result:Tomcat ,<abc> ,(ttt) [xxx1],hello world hello
+    }
+
+```
+
 
 
 
