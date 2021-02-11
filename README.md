@@ -263,7 +263,7 @@ public class JwtRealmImpl extends JwtRealm {
 
 package com.github.lyr.common.exception;
 
-import com.github.lyr2000.common.exception.ApiErrorCode;
+import ApiErrorCode;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
