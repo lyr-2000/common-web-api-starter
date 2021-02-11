@@ -11,13 +11,16 @@
 <dependency>
   <groupId>com.github.lyr-2000</groupId>
   <artifactId>common-web-api</artifactId>
-  <version>2.8</version>
+  <version>3.0</version>
 </dependency>
 
 
 
 
 ```
+
+## 最新 3.0 版本将 com.github 改成了 io.github , 展示的代码是旧版本的
+
 
 ## 对shiro模块的封装
 ### 1. 自定义 realm
