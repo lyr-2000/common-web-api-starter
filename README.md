@@ -185,6 +185,30 @@ public class JwtRealmImpl extends JwtRealm {
 
 ```
 
+
+##  shiro简单的配置 【开箱即用】
+```java
+
+
+@Bean
+    public SessionRealm sessionRealm() {
+        return new SessionRealm(){
+            @Override
+            public boolean check(String username, String password) {
+                // System.out.println(username);
+                // System.out.println(password);
+                return "666".equals(username) && "123456".equals(password);
+            }
+        };
+    }
+
+
+```
+
+
+
+
+
 ## pageHelper 通用 pagebean 结果集
 ```java
 
