@@ -79,6 +79,11 @@ public class R {
         return Result.from(DefaultApiCode.OK);
     }
 
+
+    public static<T> Result<T> ok(T obj) {
+        return Result.of(DefaultApiCode.OK,obj);
+    }
+
     /**
      * @return 失败状态码 发生了什么异常
      */
