@@ -112,7 +112,14 @@ public class ShiroConfig {
         map.put("/doc.html","authc");
         map.put("/login","anon");
         map.put("/actuator/**","authc");
+        map.put("/css/**","anon");
+        map.put("/js/**","anon");
+        map.put("/layui/**","anon");
+        map.put("/page/**","anon");
+        map.put("/images/**","anon");
         map.put("/**","anon");
+        
+      
         properties
                 .setLoginUrl("/admin/login");
         return properties;
