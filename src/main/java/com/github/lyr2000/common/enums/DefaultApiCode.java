@@ -1,6 +1,8 @@
 package com.github.lyr2000.common.enums;
 
 /**
+ * 这套接口规定的 默认规范，如果要改，只能 另外写一套实现了
+ * 暂时没办法 完全解耦
  * @Author lyr
  * @create 2021/2/1 21:37
  */

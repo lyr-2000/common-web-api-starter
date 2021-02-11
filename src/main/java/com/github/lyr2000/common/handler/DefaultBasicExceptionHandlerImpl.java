@@ -226,6 +226,7 @@ public class DefaultBasicExceptionHandlerImpl {
     }
 
     /**
+     * shiro框架
      * 权限不足
      * @param exception
      * @return

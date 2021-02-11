@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 自定义 异常 切面逻辑处理
+ *
+ *
  * @Author lyr
  * @create 2021/2/1 23:39
  */
@@ -14,6 +17,10 @@ import org.springframework.context.annotation.Configuration;
 public class ExceptionAutoConfig {
 
 
+    /**
+     * 对异常的切面 处理默认实现
+     * @return
+     */
     @Bean
     @ConditionalOnMissingBean
     public DefaultBasicExceptionHandlerImpl defaultBasicExceptionHandler() {

@@ -7,18 +7,25 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
+ * 对 pageHelper 结果集的封装
  * @Author lyr
  * @create 2021/2/2 1:19
  */
 @Data
 @Accessors(chain = true)
-@NoArgsConstructor
-public class PageResult {
+public class PageResult<T> {
     Integer curPage;
     Integer size;
     Integer totalPage;
     Long totalCount;
-    Object data;
+    List<T> data;
+
+    /**
+     * 私有化构造器，没办法直接 new
+     */
+    private PageResult() {
+
+    }
 
 
     /**
@@ -26,8 +33,8 @@ public class PageResult {
      * @param pageInfo
      * @return
      */
-    public static PageResult from(@NonNull PageInfo pageInfo) {
-        PageResult result = new PageResult();
+    public static <T> PageResult<T> from(@NonNull PageInfo<T> pageInfo) {
+        PageResult<T> result = new PageResult<>();
         //当前页面
         result.curPage = pageInfo.getPageNum();
         result.totalPage = pageInfo.getPages();
@@ -38,7 +45,7 @@ public class PageResult {
         return result;
 
     }
-    public static <T> PageResult from(@NonNull List<T> data) {
+    public static <T> PageResult<T> from(@NonNull List<T> data) {
         return from(new PageInfo(data));
     }
 

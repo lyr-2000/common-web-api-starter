@@ -3,6 +3,7 @@ package com.github.lyr2000.common.enums;
 import java.time.Duration;
 
 /**
+ * 时间枚举单位
  * @Author lyr
  * @create 2021/2/1 22:34
  */

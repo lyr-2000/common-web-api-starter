@@ -17,9 +17,21 @@ import java.util.Map;
  * @create 2021/2/10 12:57
  */
 @Data
-@AllArgsConstructor
 public class R {
     Result<Map<String,Object>> result;
+    private R() {
+
+    }
+
+    /**
+     * 私有化构造器，防止外部 直接 new
+     * @param result
+     */
+    private R(Result<Map<String, Object>> result) {
+        this.result = result;
+    }
+
+
     public static  R res() {
         return new  R(Result.of(DefaultApiCode.OK,new HashMap<>(8)));
     }

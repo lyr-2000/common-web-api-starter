@@ -14,6 +14,9 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 自己实现 的本地缓存抽象
+ *
+ *
  * @Author lyr
  * @create 2021/2/1 22:26
  */

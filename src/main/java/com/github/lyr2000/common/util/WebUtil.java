@@ -19,6 +19,7 @@ import java.net.URLEncoder;
 // import com.itshare.video.common.aop.AopPropertyUtils;
 
 /**
+ * 对 Tomcat原生 API 进行了封装
  * IO 工具类
  * @Author lyr
  * @create 2020/7/30 10:37
@@ -163,6 +164,8 @@ public class WebUtil {
         StringBuilder responseStrBuilder = new StringBuilder();
         try{
             while ((inputStr = reader.readLine()) != null) {
+                //readStr 读取的字符串不会换行
+                //这个会换行，保留文本的一些特性
                 responseStrBuilder.append(inputStr).append("\r\n");
             }
         }catch (Exception e) {
@@ -254,6 +257,10 @@ public class WebUtil {
     }
 
 
+    /**
+     * 切面获取 response对象
+     * @return
+     */
     public static HttpServletResponse getResponse() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
     }

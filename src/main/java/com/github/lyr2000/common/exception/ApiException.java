@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 /**
+ * 自定义 业务异常
  * https://www.bilibili.com/video/BV1r4411r7au?p=38
  * @Author lyr
  * @create 2021/1/28 1:55

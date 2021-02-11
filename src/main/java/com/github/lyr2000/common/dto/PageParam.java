@@ -9,6 +9,7 @@ import sun.security.krb5.internal.PAData;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 对前端 请求的 Page  size 等参数进行了封装，方便接口处理
  * @Author lyr
  * @create 2021/2/2 1:44
  */

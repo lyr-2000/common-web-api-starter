@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 开启 自定义缓存组件
  * @Author lyr
  * @create 2021/2/1 23:40
  */
