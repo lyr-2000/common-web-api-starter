@@ -1,6 +1,7 @@
 package io.github.lyr2000.common.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.github.lyr2000.common.enums.DefaultApiCode;
 import com.github.pagehelper.PageInfo;
 import lombok.Data;
@@ -16,7 +17,10 @@ import java.util.Map;
  * @create 2021/2/10 12:57
  */
 @Data
+
 public class R {
+
+    @JsonValue
     Result<Map<String,Object>> result;
     private R() {
 
@@ -78,7 +82,6 @@ public class R {
     public static Result ok() {
         return Result.from(DefaultApiCode.OK);
     }
-
 
     public static<T> Result<T> ok(T obj) {
         return Result.of(DefaultApiCode.OK,obj);
