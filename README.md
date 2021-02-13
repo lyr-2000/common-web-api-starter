@@ -19,6 +19,51 @@
 
 ```
 
+## 接口枚举定义
+
+```java
+
+
+BUSINESS_ERROR_BUSY(505, "服务繁忙"),
+    BASIC_ERROR(500, "服务运行异常"),
+
+
+    OK(200, "OK"),
+
+    NO_RESOURCE(404,"找不到资源"),
+
+    BAD_REQUEST(400,"请求报文语法错误[参数校验失败]"),
+    FORBIDDEN_REQUEST(403,"没有接口权限"),
+
+    SERVER_ERROR(500,"服务异常"),
+    SERVICE_UN_AVAILABLE(503,"服务不可用"),
+
+
+
+    NO_TOKEN(1000, "没有token验证"),
+    TOKEN_EXPIRED(1001, "token过期"),
+
+    NEW_USER(1002, "新用户"),
+    TOKEN_ERROR(1003,"token验证失败"),
+
+
+    ACCOUNT_FREEZE(1600,"账号冻结"),
+
+    TokenCheckFail(1611,"身份校验失败"),
+    TokenExpired(1612,"身份校验过期"),
+    RouterBindingException(1613,"路由参数绑定异常"),
+    NoHandlerException(1614,"没有对应访问路径");
+
+
+
+
+
+
+
+```
+
+
+
 ## 最新 3.0 版本将 com.github 改成了 io.github , 展示的代码是旧版本的
 
 
