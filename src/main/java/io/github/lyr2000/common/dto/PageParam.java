@@ -29,22 +29,54 @@ public class PageParam implements IPage {
         return of(Integer.parseInt(page),Integer.parseInt(size));
     }
 
-
-    public static PageParam from(HttpServletRequest request) {
+    /**
+     * 创建 pageParam对象
+     * @param request
+     * @return
+     */
+    private static PageParam create(HttpServletRequest request) {
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
         PageParam pageParam = new PageParam();
-        if (StrUtil.isBlank(pageStr)) pageParam.page = 1;
-        else pageParam.page = Integer.valueOf(pageStr);
+        if (StrUtil.isBlank(pageStr)) {
+            pageParam.page = 1;
+        } else {
+            pageParam.page = Integer.valueOf(pageStr);
+        }
 
-        if (StrUtil.isBlank(sizeStr)) pageParam.size = 10;
-        else pageParam.size = Integer.valueOf(sizeStr);
+        if (StrUtil.isBlank(sizeStr)) {
+            pageParam.size = 10;
+        } else {
+            pageParam.size = Integer.valueOf(sizeStr);
+        }
+
         return pageParam;
+    }
+
+    /**
+     * 默认最大返回 30 ，对前端参数进行校验
+     * @param request
+     * @return
+     */
+    public static PageParam from(HttpServletRequest request) {
+        return of(request,30);
 
     }
-    public static PageParam from(Request request) {
-        return request.getPageParam();
+
+    /**
+     * 默认最大页数 由用户设置
+     * @param request
+     * @param maxSize
+     * @return
+     */
+    public static PageParam of(HttpServletRequest request,int maxSize) {
+        PageParam pageParam = create(request);
+        if (pageParam.size>maxSize) {
+            pageParam.size = maxSize;
+        }
+        return pageParam;
     }
+
 
     @Override
     public Integer getPageNum() {

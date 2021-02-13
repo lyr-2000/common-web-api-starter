@@ -12,7 +12,7 @@
 
     <groupId>com.github.lyr-2000</groupId>
     <artifactId>common-web-api</artifactId>
-    <version>3.1</version>
+    <version>4.0</version>
     <name>lyr-2000</name>
     <description>my common web api 我的项目接口的封装</description>
     <packaging>jar</packaging>

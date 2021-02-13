@@ -1,6 +1,7 @@
 package io.github.lyr2000;
 
 import io.github.lyr2000.common.aop.LocalCache;
+import io.github.lyr2000.common.dto.PageParam;
 import io.github.lyr2000.common.dto.PageResult;
 import io.github.lyr2000.common.dto.R;
 import io.github.lyr2000.common.enums.DefaultApiCode;
@@ -12,6 +13,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 @EnableAspectJAutoProxy
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
@@ -26,9 +29,11 @@ public class Lyr2000Application {
 
     @GetMapping("/hello")
     // @LocalCache(unit = Unit.Day, duration = 1, cacheKey = "'ss'", condition = "false")
-    public R foo() {
+    public R foo(HttpServletRequest request) {
 
-        return R.res();
+        return R.res().put("page_param", PageParam.from(request))
+                ;
+                // .put("page_res",PageResult.from());
     }
 
 }
