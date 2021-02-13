@@ -39,6 +39,7 @@ public class PageResult<T> {
         result.curPage = pageInfo.getPageNum();
         result.totalPage = pageInfo.getPages();
         //总记录数
+        result.size = pageInfo.getPageSize();
         result.totalCount = pageInfo.getTotal();
         result.setData(pageInfo.getList());
 
