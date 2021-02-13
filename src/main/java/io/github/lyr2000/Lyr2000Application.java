@@ -1,13 +1,22 @@
 package io.github.lyr2000;
 
+import io.github.lyr2000.common.aop.LocalCache;
+import io.github.lyr2000.common.dto.PageResult;
+import io.github.lyr2000.common.dto.R;
+import io.github.lyr2000.common.enums.DefaultApiCode;
+import io.github.lyr2000.common.enums.Unit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @EnableAspectJAutoProxy
-@SpringBootApplication
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @RestController
+@RequestMapping
 public class Lyr2000Application {
 
     public static void main(String[] args) {
@@ -15,11 +24,11 @@ public class Lyr2000Application {
     }
 
 
-    // @GetMapping("/hello")
+    @GetMapping("/hello")
     // @LocalCache(unit = Unit.Day, duration = 1, cacheKey = "'ss'", condition = "false")
-    // public Result foo() {
-    //
-    //     return PageResult.from(DefaultApiCode.OK);
-    // }
+    public R foo() {
+
+        return R.res();
+    }
 
 }

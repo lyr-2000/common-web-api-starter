@@ -6,10 +6,13 @@ import io.github.lyr2000.common.shiro.realm.JwtRealm;
 import io.github.lyr2000.common.shiro.realm.SessionRealm;
 import io.github.lyr2000.common.shiro.util.JwtUtil;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.apache.shiro.web.session.mgt.WebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -19,6 +22,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.Filter;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,13 +73,13 @@ public class JwtAutoConfiguration {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean("securityManager")
     @ConditionalOnMissingBean
-    public DefaultWebSecurityManager defaultWebSecurityManager(JwtRealm jwtRealm, SessionRealm sessionRealm) {
+    public DefaultWebSecurityManager defaultWebSecurityManager(JwtRealm jwtRealm, SessionRealm sessionRealm, WebSessionManager webSessionManager) {
         DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
         // 使用自定义Realm
         // defaultWebSecurityManager.setRealm(jwtRealm);
         defaultWebSecurityManager.setRealms(Arrays.asList(jwtRealm,sessionRealm));
         // defaultWebSecurityManager.setL
-
+        defaultWebSecurityManager.setSessionManager(webSessionManager);
         // 关闭Shiro自带的session
         // DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
         // DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
@@ -128,6 +132,7 @@ public class JwtAutoConfiguration {
         factoryBean.setFilters(filterMap);
         factoryBean.setSecurityManager(securityManager);
 
+
         // 自定义url规则使用LinkedHashMap有序Map
         // LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>(16);
         // JwtProperties properties = jwtProperties();
@@ -165,6 +170,7 @@ public class JwtAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnMissingBean
     public FilterRegistrationBean delegatingFilterProxy(){
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         DelegatingFilterProxy proxy = new DelegatingFilterProxy();
@@ -174,6 +180,17 @@ public class JwtAutoConfiguration {
         return filterRegistrationBean;
     }
 
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DefaultWebSessionManager getDefaultWebSessionManager() {
+        DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
+        //超时时间为2天
+        defaultWebSessionManager.setGlobalSessionTimeout(Duration.ofDays(2).toMillis());// 会话过期时间，单位：毫秒(在无操作时开始计时)--->一分钟,用于测试
+        defaultWebSessionManager.setSessionValidationSchedulerEnabled(true);
+        defaultWebSessionManager.setSessionIdCookieEnabled(true);
+        return defaultWebSessionManager;
+    }
 
 
 
