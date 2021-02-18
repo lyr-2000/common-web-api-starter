@@ -128,7 +128,7 @@ public class JwtAutoConfiguration {
     public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager, ShiroCustomProperties properties,JwtUtil jwtUtil) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         // 添加自己的过滤器取名为jwt
-        Map<String, Filter> filterMap = new HashMap<>(16);
+        Map<String, Filter> filterMap = new HashMap<>(8);
         filterMap.put("jwt", new JwtFilter(properties,jwtUtil));
         factoryBean.setFilters(filterMap);
         factoryBean.setSecurityManager(securityManager);

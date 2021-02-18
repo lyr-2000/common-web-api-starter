@@ -38,8 +38,8 @@ public class SessionRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo per = new SimpleAuthorizationInfo();
         // Subject subject = SecurityUtils.getSubject();
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = (UsernamePasswordToken)subject.getPrincipal();
-        doAuthorizationCustom(per,token.getUsername());
+        String username  = (String)subject.getPrincipal();
+        doAuthorizationCustom(per,username);
         // per.addRoles(getRoles(token.getUsername()));
         // per.addStringPermissions(getPermissions(token.getUsername()));
         return per;
