@@ -8,6 +8,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,11 +39,26 @@ public class SessionRealm extends AuthorizingRealm {
         // Subject subject = SecurityUtils.getSubject();
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = (UsernamePasswordToken)subject.getPrincipal();
-        per.addRoles(getRoles(token.getUsername()));
-        per.addStringPermissions(getPermissions(token.getUsername()));
+        doAuthorizationCustom(per,token.getUsername());
+        // per.addRoles(getRoles(token.getUsername()));
+        // per.addStringPermissions(getPermissions(token.getUsername()));
         return per;
 
     }
+
+    /**
+     * 获取用户权限信息
+     * 需要重写方法
+     * @param per
+     * @param username
+     */
+    // @Override
+    @Transactional(readOnly = true)
+    public void doAuthorizationCustom(SimpleAuthorizationInfo per, String username) {
+        per.addRoles(getRoles(username));
+        per.addStringPermissions(getPermissions(username));
+    }
+
 
 
     /**
@@ -54,7 +70,7 @@ public class SessionRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken stoken) throws AuthenticationException {
-        log.info("session _realm__");
+        // log.info("session _realm__");
         UsernamePasswordToken token = (UsernamePasswordToken)stoken;
         String username = token.getUsername();
         String password = String.valueOf(token.getPassword());

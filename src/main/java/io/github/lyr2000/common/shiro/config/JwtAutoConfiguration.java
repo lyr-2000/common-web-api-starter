@@ -11,6 +11,7 @@ import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.session.mgt.WebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -183,12 +184,23 @@ public class JwtAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DefaultWebSessionManager getDefaultWebSessionManager() {
+    public Cookie cookieDAO() {
+        Cookie cookie=new org.apache.shiro.web.servlet.SimpleCookie();
+        cookie.setName("WEBSID");
+        return cookie;
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DefaultWebSessionManager getDefaultWebSessionManager(Cookie cookieDAO) {
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
         //超时时间为2天
         defaultWebSessionManager.setGlobalSessionTimeout(Duration.ofDays(2).toMillis());// 会话过期时间，单位：毫秒(在无操作时开始计时)--->一分钟,用于测试
         defaultWebSessionManager.setSessionValidationSchedulerEnabled(true);
         defaultWebSessionManager.setSessionIdCookieEnabled(true);
+        //sessionId 的 名字 叫做 WEBSID
+        defaultWebSessionManager.setSessionIdCookie(cookieDAO);
         return defaultWebSessionManager;
     }
 

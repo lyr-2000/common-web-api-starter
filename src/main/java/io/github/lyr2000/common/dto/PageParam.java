@@ -1,7 +1,6 @@
 package io.github.lyr2000.common.dto;
 
 import cn.hutool.core.util.StrUtil;
-import io.github.lyr2000.common.web.Request;
 import com.github.pagehelper.IPage;
 import lombok.Data;
 import lombok.experimental.Accessors;
