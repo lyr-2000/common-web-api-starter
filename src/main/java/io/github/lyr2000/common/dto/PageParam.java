@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 public class PageParam implements IPage {
     private Integer page;
     private Integer size;
+    private String orderBy;
 
     public static PageParam of(int page,int size) {
         PageParam pageParam = new PageParam();
@@ -28,11 +29,6 @@ public class PageParam implements IPage {
         return of(Integer.parseInt(page),Integer.parseInt(size));
     }
 
-    /**
-     * 创建 pageParam对象
-     * @param request
-     * @return
-     */
     private static PageParam create(HttpServletRequest request) {
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
@@ -51,23 +47,10 @@ public class PageParam implements IPage {
 
         return pageParam;
     }
-
-    /**
-     * 默认最大返回 30 ，对前端参数进行校验
-     * @param request
-     * @return
-     */
     public static PageParam from(HttpServletRequest request) {
-        return of(request,30);
+        return of(request,50);
 
     }
-
-    /**
-     * 默认最大页数 由用户设置
-     * @param request
-     * @param maxSize
-     * @return
-     */
     public static PageParam of(HttpServletRequest request,int maxSize) {
         PageParam pageParam = create(request);
         if (pageParam.size>maxSize) {
@@ -89,6 +72,7 @@ public class PageParam implements IPage {
 
     @Override
     public String getOrderBy() {
-        return null;
+        return orderBy;
     }
 }
+

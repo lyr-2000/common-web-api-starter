@@ -13,6 +13,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ImportAutoConfiguration(JwtAutoConfiguration.class)
-public @interface EnableJwtAutoConfig {
+@ImportAutoConfiguration(ShiroAutoConfiguration.class)
+public @interface EnableShiroAutoConfig {
 }
