@@ -11,10 +11,8 @@
 <dependency>
   <groupId>com.github.lyr-2000</groupId>
   <artifactId>common-web-api</artifactId>
-  <version>4.1.0</version>
+  <version>4.3.25</version>
 </dependency>
-
-
 
 
 ```
