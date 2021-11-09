@@ -248,7 +248,74 @@ public class JwtRealmImpl extends JwtRealm {
 
 ```
 
+```java
+package io.github.lyr2000.dissertation.config;
 
+import io.github.lyr2000.common.dto.Maps;
+import io.github.lyr2000.common.shiro.config.EnableShiroAutoConfig;
+import io.github.lyr2000.common.shiro.config.ShiroCustomProperties;
+import io.github.lyr2000.common.shiro.filter.JwtFilter;
+import io.github.lyr2000.common.shiro.util.JwtUtil;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.LinkedHashMap;
+
+/**
+ * @author LYR666
+ * @description shiro权限框架配置
+ * @create 2021-11-03 20:16
+ */
+@EnableShiroAutoConfig
+@Configuration
+public class ShiroConfig {
+    @Bean
+    // @Profile({"prod","dev"})
+    public ShiroCustomProperties shiroCustomProperties() {
+        LinkedHashMap map  = (LinkedHashMap)
+                Maps.linkedHashMap()
+                        .put("/backend/login","anon")
+                        .put("/backend/login11","anon")
+                        .put("/backend/code","anon")
+                        .put("/css/**","anon")
+                        .put("/js/**","anon")
+                        .put("/images/**","anon")
+                        .put("/fonts/**","anon")
+                        .put("/lyear-**","anon")
+                        .put("/lib/**","anon")
+                        // .put("/api/file","anon")
+                        .put("/**","authc")
+                        .put("/backend/**","roles[admin]")
+                        .getMap();
+        return new ShiroCustomProperties("blog.github.lyr","token")
+                .setLoginUrl("/backend/login")
+                .setUnauthorizedUrl("/backend/login")
+                .setSuccessUrl("/backend/")
+                .setCustomFilterChain(
+                        map
+                );
+    }
+
+    /**
+     * jwt工具类
+     * @return
+     */
+    @Bean
+    public JwtUtil jwtUtil() {
+        return new JwtUtil(shiroCustomProperties());
+    }
+
+    /**
+     * jwt 拦截器
+     * @return
+     */
+    @Bean
+    public JwtFilter jwtFilter() {
+        return new JwtFilter(shiroCustomProperties(),jwtUtil());
+    }
+}
+
+```
 
 
 
