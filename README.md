@@ -11,10 +11,8 @@
 <dependency>
   <groupId>com.github.lyr-2000</groupId>
   <artifactId>common-web-api</artifactId>
-  <version>4.1.0</version>
+  <version>4.3.25</version>
 </dependency>
-
-
 
 
 ```
@@ -250,7 +248,135 @@ public class JwtRealmImpl extends JwtRealm {
 
 ```
 
+```java
+package io.github.lyr2000.dissertation.config;
 
+import io.github.lyr2000.common.dto.Maps;
+import io.github.lyr2000.common.shiro.config.EnableShiroAutoConfig;
+import io.github.lyr2000.common.shiro.config.ShiroCustomProperties;
+import io.github.lyr2000.common.shiro.filter.JwtFilter;
+import io.github.lyr2000.common.shiro.util.JwtUtil;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.LinkedHashMap;
+
+/**
+ * @author LYR666
+ * @description shiro权限框架配置
+ * @create 2021-11-03 20:16
+ */
+@EnableShiroAutoConfig
+@Configuration
+public class ShiroConfig {
+    @Bean
+    // @Profile({"prod","dev"})
+    public ShiroCustomProperties shiroCustomProperties() {
+        LinkedHashMap map  = (LinkedHashMap)
+                Maps.linkedHashMap()
+                        .put("/backend/login","anon")
+                        .put("/backend/login11","anon")
+                        .put("/backend/code","anon")
+                        .put("/css/**","anon")
+                        .put("/js/**","anon")
+                        .put("/images/**","anon")
+                        .put("/fonts/**","anon")
+                        .put("/lyear-**","anon")
+                        .put("/lib/**","anon")
+                        // .put("/api/file","anon")
+                        .put("/**","authc")
+                        .put("/backend/**","roles[admin]")
+                        .getMap();
+        return new ShiroCustomProperties("blog.github.lyr","token")
+                .setLoginUrl("/backend/login")
+                .setUnauthorizedUrl("/backend/login")
+                .setSuccessUrl("/backend/")
+                .setCustomFilterChain(
+                        map
+                );
+    }
+
+    /**
+     * jwt工具类
+     * @return
+     */
+    @Bean
+    public JwtUtil jwtUtil() {
+        return new JwtUtil(shiroCustomProperties());
+    }
+
+    /**
+     * jwt 拦截器
+     * @return
+     */
+    @Bean
+    public JwtFilter jwtFilter() {
+        return new JwtFilter(shiroCustomProperties(),jwtUtil());
+    }
+}
+
+```
+
+
+### 重写 JwtFilter 解决跨域问题
+```java
+package io.github.lyr2000.dissertation.components;
+
+import io.github.lyr2000.common.shiro.config.ShiroCustomProperties;
+import io.github.lyr2000.common.shiro.filter.JwtFilter;
+import io.github.lyr2000.common.shiro.util.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @author lyr
+ * @description 跨域配置
+ * @create 2021-11-09 19:34
+ */
+@Slf4j
+@Component
+public class ShiroHttpAuthenticationFilter extends JwtFilter {
+    public ShiroHttpAuthenticationFilter(ShiroCustomProperties shiroCustomProperties, JwtUtil jwtUtil) {
+        super(shiroCustomProperties, jwtUtil);
+    }
+
+    /**
+     * 重写 jwtFilter 解决跨域问题
+     * @param request 
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @Override
+    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        // log.info("ddd");
+        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin")); //标识允许哪个域到请求，直接修改成请求头的域
+        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,OPTIONS,PUT,DELETE");//标识允许的请求方法
+        // 响应首部 Access-Control-Allow-Headers 用于 preflight request （预检请求）中，列出了将会在正式请求的 Access-Control-Expose-Headers 字段中出现的首部信息。修改为请求首部
+        //参考：https://cloud.tencent.com/developer/section/1189900
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
+        //给option请求直接返回正常状态
+        if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
+            httpServletResponse.setStatus(HttpStatus.OK.value());
+            return false;
+        }
+
+        return super.preHandle(request, response);
+    }
+}
+
+
+```
 
 
 
@@ -282,7 +408,7 @@ public class JwtRealmImpl extends JwtRealm {
 
 
 
-## fluent式编程
+## 其他
 ```java
 
 
