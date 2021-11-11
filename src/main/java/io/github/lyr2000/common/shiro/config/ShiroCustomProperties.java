@@ -3,8 +3,11 @@ package io.github.lyr2000.common.shiro.config;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import org.apache.shiro.realm.Realm;
+import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * shiro 通用配置类
@@ -34,6 +37,12 @@ public class ShiroCustomProperties {
      *
      */
     private LinkedHashMap<String,String> customFilterChain;
+    /**
+     * 自定义 realm
+     */
+    private List<Realm> realmList;
+
+    private List<CustomFilterFactory> filterFactoryList;
 
 
     private String loginUrl;

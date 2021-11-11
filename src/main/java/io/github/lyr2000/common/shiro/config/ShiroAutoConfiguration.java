@@ -10,9 +10,11 @@ import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.Cookie;
+import org.apache.shiro.web.servlet.ShiroFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,7 +39,18 @@ public class ShiroAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ShiroCustomProperties shiroProperties() {
-        return new ShiroCustomProperties("lyr-2000.blog", "token");
+        ShiroCustomProperties prop = new ShiroCustomProperties("lyr-2000.blog", "token");
+        return prop.setFilterFactoryList(Arrays.asList(new CustomFilterFactory() {
+            @Override
+            public String getFilterName() {
+                return "jwt";
+            }
+
+            @Override
+            public BasicHttpAuthenticationFilter getFilter() {
+                return new JwtFilter(prop,jwtUtil(prop));
+            }
+        }));
     }
 
     @Bean
@@ -99,13 +112,18 @@ public class ShiroAutoConfiguration {
     @Bean("securityManager")
     @ConditionalOnMissingBean
     public DefaultWebSecurityManager defaultWebSecurityManager( RememberMeManager rememberMeManager,
-                                                                //JwtRealm jwtRealm,
-                                                                SessionRealm sessionRealm
+                                                                ShiroCustomProperties properties
+                                                                // SessionRealm sessionRealm
             /* WebSessionManager webSessionManager*/) {
         DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
         // 使用自定义Realm
         // defaultWebSecurityManager.setRealm(jwtRealm);
-        defaultWebSecurityManager.setRealms(Arrays.asList(/*jwtRealm,*/ sessionRealm));
+        if(properties.getRealmList()!=null && properties.getRealmList().size()>0) {
+            defaultWebSecurityManager.setRealms(properties.getRealmList());
+        }else {
+            //使用自带的 jwtRealm 和 sessionRealm
+            defaultWebSecurityManager.setRealms(Arrays.asList(jwtRealm(),sessionRealm()));
+        }
         // defaultWebSecurityManager.setAuthenticator(modularRealmAuthenticator);
         // defaultWebSecurityManager.setL
         // defaultWebSecurityManager.set
@@ -172,7 +190,14 @@ public class ShiroAutoConfiguration {
                                                          ShiroCustomProperties properties) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         Map<String, Filter> filterMap = new HashMap<>(16);
-        filterMap.put("jwt", new JwtFilter(shiroCustomProperties, jwtUtil));
+        //TODO: 改为用工厂模式创建
+        // filterMap.put("jwt", new JwtFilter(shiroCustomProperties, jwtUtil));
+        if (shiroCustomProperties.getFilterFactoryList()!=null && shiroCustomProperties.getFilterFactoryList().size()>0) {
+            for (CustomFilterFactory factory: shiroCustomProperties.getFilterFactoryList()) {
+                //设置过滤器
+                filterMap.put(factory.getFilterName(),factory.getFilter());
+            }
+        }
         factoryBean.setFilters(filterMap);
         factoryBean.setSecurityManager(securityManager);
         if (properties.getLoginUrl() != null) {
