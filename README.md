@@ -533,7 +533,7 @@ public enum ApiCustomErrorCode implements ApiErrorCode {
 ```
 
 
-## patternUtil 解析 {} 花括号表达式
+## patternUtil 解析 {}  表达式
 
 ```java
 
@@ -554,7 +554,7 @@ public enum ApiCustomErrorCode implements ApiErrorCode {
 
 ### 需要依赖的库
 
-```java
+```xml
 
 
 
