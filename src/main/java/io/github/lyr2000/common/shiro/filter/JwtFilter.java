@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
@@ -31,8 +32,8 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
-    private final ShiroCustomProperties shiroCustomProperties;
-    private final JwtUtil jwtUtil;
+    protected final ShiroCustomProperties shiroCustomProperties;
+    protected final JwtUtil jwtUtil;
     /**
      * 拦截器预处理
      * @param request
@@ -43,12 +44,18 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
+        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin")); //标识允许哪个域到请求，直接修改成请求头的域
+        httpServletResponse.setHeader("Access-Control-Allow-Methods", httpServletRequest.getMethod());//标识允许的请求方法
+        // 响应首部 Access-Control-Allow-Headers 用于 preflight request （预检请求）中，列出了将会在正式请求的 Access-Control-Expose-Headers 字段中出现的首部信息。修改为请求首部
+        //参考：https://cloud.tencent.com/developer/section/1189900
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
         //options 请求，直接放行
-        if (req.getMethod().equals(RequestMethod.OPTIONS.name())) {
-            res.setStatus(org.springframework.http.HttpStatus.OK.value());
+        if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
+            // log.info("options is OK");
+            httpServletResponse.setStatus(HttpStatus.OK.value());
             return false;
         }
 
@@ -113,25 +120,31 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         String token = WebUtils.toHttp(request).getHeader(shiroCustomProperties.getTokenHeader());
         log.info("token={}",token);
         if (null == token || StrUtil.isBlank(token)) {
-            log.info("丢出异常");
+            log.info("token is null ,url = {}",WebUtils.toHttp(request).getRequestURI());
+            // log.info("丢出异常");
             // throw new ApiException(DefaultApiCode.NO_TOKEN);
             ShiroWebUtil.renderJson((HttpServletResponse) response, Result.of(DefaultApiCode.NO_TOKEN,"请登录验证"));
             return false;
         }
-        JwtToken jwtToken = jwtUtil.decodeJwtToken(token);
-        JwtResult result = jwtToken.getResult();
-        if(result == null || result == JwtResult.Fail) {
-            ShiroWebUtil.renderJson((HttpServletResponse) response, Result.from(DefaultApiCode.TokenCheckFail));
-            return  false;
-        }else if (result == JwtResult.OVERDUE) {
-            WebUtil.renderJson((HttpServletResponse) response, Result.from(DefaultApiCode.TOKEN_EXPIRED));
-            return false;
+        try {
+            JwtToken jwtToken = jwtUtil.decodeJwtToken(token);
+            JwtResult result = jwtToken.getResult();
+            if(result == null || result == JwtResult.Fail) {
+                ShiroWebUtil.renderJson((HttpServletResponse) response, Result.from(DefaultApiCode.TokenCheckFail));
+                return  false;
+            }else if (result == JwtResult.OVERDUE) {
+                WebUtil.renderJson((HttpServletResponse) response, Result.from(DefaultApiCode.TOKEN_EXPIRED));
+                return false;
+            }
+            request.setAttribute(ShiroConstant.requestAttrName,jwtToken);
+            //执行登录逻辑
+            getSubject(request,response).login(jwtToken);
+            return true;
+        }catch (Exception e) {
+            //捕获异常并且打印
+            log.error("JwtFilter.executeLogin msg = {}",e.getMessage());
         }
-        request.setAttribute(ShiroConstant.requestAttrName,jwtToken);
-        //执行登录逻辑
-        getSubject(request,response).login(jwtToken);
-        return true;
-
+        return  false;
 
     }
 }
